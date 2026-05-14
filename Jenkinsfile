@@ -5,6 +5,9 @@ pipeline {
         jdk 'JDK21'
         maven 'M3'
     }
+    environment {
+        DOCKERHUB_CRED = credentials('dockerCredenrial')
+    }
     
     stages {
         // Github에서 소스코드 가져오기
@@ -23,8 +26,28 @@ pipeline {
             }
         }
         // Docker 이미지 생성
+        stage('Docker Build') {
+            steps {
+                sh 'docker build pt spring-petclinic:${BUILD_NUMBER} .'
+                sh 'docker tag spring-petclinic:${BUILD_NUMBER} hame2/spring-petclinic:latest'
+            }
+        }
         // Docker 이미지를 Docker Hub로 Push
+        stage(Docker Push) {
+            stpes {
+                sh 'echo $DOCKER_CRED_PSW | docker login -u ${DOCKERHUB_CRED_USR} --password-stdin'
+                sh 'docker push hame2/spring-petclinic:latest'
+            }
+        }
         // Docker 이미지 삭제
+        stage('Docker Clean') {
+            step {
+                sh '''
+                docker rmi spring-petclinic:${BUILD_NUMBER}
+                docker rmi hame2/spring-petclinic:latest
+                '''
+            }
+        }
         
         // Docker Hub를 이용한 배포
         stage('SSH Publish') {
