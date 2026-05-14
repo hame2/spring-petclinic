@@ -30,14 +30,14 @@ pipeline {
         stage('Docker Build') {
             steps {
                 sh 'docker build -t spring-petclinic:${BUILD_NUMBER} .'
-                sh 'docker tag spring-petclinic:${BUILD_NUMBER} hame2/spring-petclinic:latest'
+                sh 'docker tag spring-petclinic:${BUILD_NUMBER} ham2222/spring-petclinic:latest'
             }
         }
         // Docker 이미지를 Docker Hub로 Push
         stage('Docker Push') {
             steps {
                 sh 'echo ${DOCKERHUB_CRED_PSW} | docker login -u ${DOCKERHUB_CRED_USR} --password-stdin'
-                sh 'docker push hame2/spring-petclinic:latest'
+                sh 'docker push ham2222/spring-petclinic:latest'
             }
         }
         // Docker 이미지 삭제
@@ -45,7 +45,7 @@ pipeline {
             steps {
                 sh '''
                 docker rmi spring-petclinic:${BUILD_NUMBER}
-                docker rmi hame2/spring-petclinic:latest
+                docker rmi ham2222/spring-petclinic:latest
                 '''
             }
         }
