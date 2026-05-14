@@ -22,7 +22,11 @@ pipeline {
                 sh 'mvn -Dmaven.test.failure.ignore=true clean package'
             }
         }
-        // SSH를 이용한 배포
+        // Docker 이미지 생성
+        // Docker 이미지를 Docker Hub로 Push
+        // Docker 이미지 삭제
+        
+        // Docker Hub를 이용한 배포
         stage('SSH Publish') {
             steps {
                 sshPublisher(publishers: [sshPublisherDesc(configName: 'target',
