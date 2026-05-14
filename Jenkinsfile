@@ -33,7 +33,7 @@ pipeline {
             }
         }
         // Docker 이미지를 Docker Hub로 Push
-        stage(Docker Push) {
+        stage('Docker Push') {
             stpes {
                 sh 'echo $DOCKER_CRED_PSW | docker login -u ${DOCKERHUB_CRED_USR} --password-stdin'
                 sh 'docker push hame2/spring-petclinic:latest'
