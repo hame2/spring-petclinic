@@ -26,7 +26,8 @@ pipeline {
         stage('SSH Publish') {
             steps {
                 sshPublisher(publishers: [sshPublisherDesc(configName: 'target',
-                transfers: [sshTransfer(cleanRemote: false, excludes: '', 
+                transfers: [sshTransfer(cleanRemote: false, 
+                excludes: '', 
                 execCommand: '''fuser -k 8080/tcp
                 export BUILD_ID=Spring-PetClinic                
                  nohup java -jar /home/ubuntu/spring-petclinic-4.0.0-SNAPSHOT.jar >> nohup.out 2>&1 &''',
