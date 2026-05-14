@@ -15,7 +15,7 @@ pipeline {
         stage('Git Clone') {
             steps {
                 echo 'Git Clone'
-                git url: 'https://github.com/nurim70/spring-petclinic.git',
+                git url: 'https://github.com/hame2/spring-petclinic.git',
                 branch: 'main'
             }
         }
@@ -30,14 +30,14 @@ pipeline {
         stage('Docker Build') {
             steps {
                 sh 'docker build -t spring-petclinic:${BUILD_NUMBER} .'
-                sh 'docker tag spring-petclinic:${BUILD_NUMBER} nurim70/spring-petclinic:latest'
+                sh 'docker tag spring-petclinic:${BUILD_NUMBER} hame2/spring-petclinic:latest'
             }
         }
         // Docker 이미지를 Docker Hub로 Push
         stage('Docker Push') {
             steps {
                 sh 'echo ${DOCKERHUB_CRED_PSW} | docker login -u ${DOCKERHUB_CRED_USR} --password-stdin'
-                sh 'docker push nurim70/spring-petclinic:latest'
+                sh 'docker push hame2/spring-petclinic:latest'
             }
         }
         // Docker 이미지 삭제
@@ -45,7 +45,7 @@ pipeline {
             steps {
                 sh '''
                 docker rmi spring-petclinic:${BUILD_NUMBER}
-                docker rmi nurim70/spring-petclinic:latest
+                docker rmi hame2/spring-petclinic:latest
                 '''
             }
         }
@@ -53,11 +53,12 @@ pipeline {
         stage('Docker Deploy') {
             steps {
                 sshPublisher(publishers: [sshPublisherDesc(configName: 'target', 
-                transfers: [sshTransfer(cleanRemote: false, excludes: '',
+                transfers: [sshTransfer(cleanRemote: false,  
+                excludes: '',
                 execCommand: '''
                 docker rm -f $(docker ps -aq)
                 docker rmi $(docker images -q)
-                docker run -itd -p 80:8080 --name=spring-petclinic nurim70/spring-petclinic:latest
+                docker run -itd -p 80:8080 --name=spring-petclinic hame2/spring-petclinic:latest
                 ''', 
                 execTimeout: 120000, 
                 flatten: false, 
@@ -67,7 +68,7 @@ pipeline {
                 remoteDirectory: '', 
                 remoteDirectorySDF: false, 
                 removePrefix: 'target', 
-                sourceFiles: 'target/*.jar')], 
+                sourceFiles: '')], 
                 usePromotionTimestamp: false, 
                 useWorkspaceInPromotion: false, 
                 verbose: false)])
